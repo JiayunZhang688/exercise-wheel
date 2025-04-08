@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>今天运动吗？🎯</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      text-align: center;
+      padding: 50px 20px;
+      background: linear-gradient(to right, #fdfbfb, #ebedee);
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #333;
+      min-height: 50px;
+      transition: all 0.4s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 今天运动吗？</h1>
+  <button onclick="spinWheel()">点我转盘！🎲</button>
+  <div id="result"></div>
+
+  <script>
+    const options = [
+      "🧘‍♀️ 来个轻运动，比如靠墙十分钟？",
+      "🏋️ switch运动时间到！",
+      "❌ 休息一下，今天不运动",
+      "🚴 骑车半小时，动起来",
+      "❌ 休息一下，今天不运动",
+      "🤸‍♀️ 做做帕梅拉，没有小肚肚",
+      "🤔 你中奖了！再转一次哦"
+    ];
+
+    function spinWheel() {
+      const resultDiv = document.getElementById("result");
+      resultDiv.textContent = "转动中...";
+      setTimeout(() => {
+        const choice = options[Math.floor(Math.random() * options.length)];
+        resultDiv.textContent = choice;
+      }, 1000); // 模拟动画延迟 1 秒
+    }
+  </script>
+</body>
+</html>
