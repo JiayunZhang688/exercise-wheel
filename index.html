@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>今天运动吗？🎯</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      text-align: center;
+      padding: 50px 20px;
+      background: linear-gradient(to right, #fdfbfb, #ebedee);
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #result, #scoreDisplay, #rewardMessage, #log {
+      margin-top: 20px;
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #333;
+      min-height: 40px;
+    }
+    #rewardMessage {
+      color: #d6336c;
+    }
+    #log {
+      font-size: 0.95em;
+      color: #555;
+      text-align: left;
+      max-width: 600px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 今天运动吗？</h1>
+  <button onclick="spinWheel()">转转盘 🎲</button>
+  <button onclick="completeTask()">完成任务 ✅</button>
+  <button onclick="resetScore()">清空积分 🧹</button>
+
+  <div id="result">点击转盘开始吧！</div>
+  <div id="scoreDisplay">当前积分：0</div>
+  <div id="rewardMessage"></div>
+  <div id="log"></div>
+
+  <script>
+    const options = [
+      { text: "🧘‍♀️ 来个轻运动，比如靠墙十分钟？", points: 10 },
+      { text: "🏋️ switch运动时间到！", points: 10 },
+      { text: "❌ 休息一下，今天不运动", points: 0 },
+      { text: "🚴 骑车半小时，动起来", points: 15 },
+      { text: "❌ 休息一下，今天不运动", points: 0 },
+      { text: "🤸‍♀️ 做做帕梅拉，没有小肚肚", points: 15 },
+      { text: "💑 双人运动为什么不能是运动呢？", points: 25 },
+      { text: "💑 双人运动为什么不能是运动呢？", points: 25 },
+      { text: "🤔 你中奖了！心里默念小狗的大名一遍，然后再转一次哦~", points: 52 },
+    ];
+
+    let currentOption = null;
+    let score = 0;
+    let lastRewardCheckpoint = 0;
+    let log = [];
+
+    window.onload = function () {
+      const savedScore = localStorage.getItem('fitnessScore');
+      const savedLog = localStorage.getItem('fitnessLog');
+      if (savedScore) {
+        score = parseInt(savedScore);
+        updateScoreDisplay();
+      }
+      if (savedLog) {
+        log = JSON.parse(savedLog);
+        updateLog();
+      }
+    }
+
+    function spinWheel() {
+      const resultDiv = document.getElementById("result");
+      resultDiv.textContent = "转动中...";
+      setTimeout(() => {
+        currentOption = options[Math.floor(Math.random() * options.length)];
+        resultDiv.textContent = `${currentOption.text}（${currentOption.points}积分）`;
+      }, 800);
+    }
+
+    function completeTask() {
+      if (!currentOption) return;
+      score += currentOption.points;
+      log.push({
+        time: new Date().toLocaleString(),
+        activity: currentOption.text,
+        points: currentOption.points
+      });
+      localStorage.setItem('fitnessScore', score);
+      localStorage.setItem('fitnessLog', JSON.stringify(log));
+      updateScoreDisplay();
+      updateLog();
+      checkReward();
+      currentOption = null;
+      document.getElementById("result").textContent = "任务已完成，来点新的吧～";
+    }
+
+    function resetScore() {
+      score = 0;
+      lastRewardCheckpoint = 0;
+      log = [];
+      localStorage.removeItem('fitnessScore');
+      localStorage.removeItem('fitnessLog');
+      updateScoreDisplay();
+      updateLog();
+      document.getElementById("rewardMessage").textContent = "积分已清空～";
+    }
+
+    function updateScoreDisplay() {
+      document.getElementById("scoreDisplay").textContent = `当前积分：${score}`;
+    }
+
+    function updateLog() {
+      const logDiv = document.getElementById("log");
+      logDiv.innerHTML = "<strong>任务记录：</strong><br>" + log.map(entry => `【${entry.time}】${entry.activity}（+${entry.points}）`).reverse().join("<br>");
+    }
+
+    function checkReward() {
+      const rewardMsg = document.getElementById("rewardMessage");
+      if (Math.floor(score / 100) > Math.floor(lastRewardCheckpoint / 100)) {
+        rewardMsg.textContent = "🎁 奖励达成！小狗亲亲一个！🐶💋";
+        lastRewardCheckpoint = score;
+      } else {
+        rewardMsg.textContent = "";
+      }
+    }
+  </script>
+</body>
+</html>
